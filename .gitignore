@@ -36,4 +36,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 dev-cluster-config
-*.hcl
+.terraform.lock.hcl
