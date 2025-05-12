@@ -1,0 +1,32 @@
+grafana:
+  enabled: true
+  adminPassword: admin
+  service:
+    type: ClusterIP
+  serviceMonitor:
+    enabled: true
+
+prometheus:
+  enabled: true
+  service:
+    type: ClusterIP
+  serviceMonitor:
+    enabled: true
+
+alertmanager:
+  enabled: false  # Keeping it simple for development
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: false
+    etcd: false
+    configReloaders: false
+    general: true
+    k8s: true
+    kubeApiserver: true
+    kubeScheduler: false
+    kubeStateMetrics: true
+    kubelet: true
+    nodeExporter: true
+    prometheus: true
