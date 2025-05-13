@@ -69,6 +69,7 @@ spec:
     schema:
       openAPIV3Schema:
         type: object
+        x-kubernetes-preserve-unknown-fields: true
     served: true
     storage: true
 ---
@@ -90,6 +91,7 @@ spec:
     schema:
       openAPIV3Schema:
         type: object
+        x-kubernetes-preserve-unknown-fields: true
     served: true
     storage: true
 ---
@@ -99,10 +101,28 @@ metadata:
   name: argocd-server
   namespace: argocd
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-application-controller
+  namespace: argocd
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: argocd-server
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-application-controller
 rules:
 - apiGroups:
   - '*'
@@ -122,6 +142,19 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: argocd-server
+  namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-application-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-application-controller
+subjects:
+- kind: ServiceAccount
+  name: argocd-application-controller
   namespace: argocd
 ---
 apiVersion: v1
@@ -233,6 +266,7 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 8081
+      serviceAccountName: argocd-server
 ---
 apiVersion: v1
 kind: Service
@@ -270,6 +304,12 @@ spec:
         - "20"
         - --operation-processors
         - "10"
+        ports:
+        - containerPort: 8082
+        env:
+        - name: ARGOCD_APPLICATION_CONTROLLER_REDIS
+          value: argocd-redis:6379
+      serviceAccountName: argocd-application-controller
 ---
 apiVersion: v1
 kind: Service
