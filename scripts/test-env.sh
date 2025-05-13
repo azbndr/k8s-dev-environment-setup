@@ -35,7 +35,7 @@ CORE_SERVICES=(
     "argocd-server"
     "ingress-nginx-controller"
     "monitoring-grafana"
-    "prometheus-operated"  # Changed this line - this is the correct service name
+    "prometheus-operated"
 )
 for svc in "${CORE_SERVICES[@]}"; do
     NS="${svc%-*}"
