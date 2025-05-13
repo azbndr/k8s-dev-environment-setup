@@ -27,11 +27,15 @@ kubectl wait --for=condition=Ready nodes --all --timeout=300s
 echo -e "${GREEN}Installing ArgoCD...${NC}"
 kubectl create namespace argocd || true
 kubectl apply -f ../k8s/argocd/install.yaml
-kubectl apply -f ../k8s/argocd/manifests/install.yaml
 
 # Install NGINX Ingress
 echo -e "${GREEN}Installing NGINX Ingress Controller...${NC}"
 kubectl apply -f ../k8s/ingress/nginx-ingress.yaml
+
+# Deploy Guestbook Application
+echo -e "${GREEN}Deploying Guestbook Application...${NC}"
+kubectl apply -f ../k8s/apps/guestbook-app.yaml
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
 
 # Install Monitoring Stack
 echo -e "${GREEN}Installing Monitoring Stack...${NC}"
@@ -52,6 +56,11 @@ kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:80 &
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=grafana -n monitoring --timeout=300s
 kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80 &
 
+# Wait for Guestbook to be ready and setup port-forwarding
+echo -e "${GREEN}Setting up Guestbook access...${NC}"
+kubectl wait --for=condition=ready pod -l app=guestbook-ui -n guestbook --timeout=300s
+kubectl port-forward svc/guestbook-ui -n guestbook 8081:80 &
+
 # Get access credentials
 echo -e "${GREEN}Getting access credentials...${NC}"
 echo -e "${BLUE}ArgoCD Initial Password:${NC}"
@@ -61,5 +70,6 @@ echo "admin" # Set in values.yaml
 
 echo -e "${GREEN}Setup complete! You can now access:${NC}"
 echo -e "ArgoCD UI: http://localhost:8080 (user: admin)"
-echo -e "Grafana: http://localhost:3000 (user: admin, password: admin)"
+echo -e "Grafana: http://localhost:3000 (user: admin)"
+echo -e "Guestbook: http://localhost:8081"
 echo -e "\nPort-forwarding is running in the background. To stop it, run: pkill -f 'kubectl port-forward'"

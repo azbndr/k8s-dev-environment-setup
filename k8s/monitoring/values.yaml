@@ -1,10 +1,15 @@
 grafana:
   enabled: true
-  adminPassword: admin
   service:
     type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.localhost
   serviceMonitor:
     enabled: true
+  adminPassword: admin
 
 prometheus:
   enabled: true
