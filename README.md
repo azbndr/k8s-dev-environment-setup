@@ -16,12 +16,15 @@ A streamlined, automated setup for a local Kubernetes development environment us
 ## 🛠 Prerequisites
 
 The following tools are required:
+
 - Docker
+- KIND (Kubernetes IN Docker)
 - Terraform
 - kubectl
 - Helm
 
 You can install all prerequisites using our setup script:
+
 ```bash
 sudo ./scripts/install_prerequisites.sh
 ```
@@ -29,24 +32,27 @@ sudo ./scripts/install_prerequisites.sh
 ## 🏃‍♂️ Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/azbndr/k8s-dev-environment-setup.git
 cd k8s-dev-environment-setup
 ```
 
 2. Run the setup script:
+
 ```bash
 ./scripts/setup.sh
 ```
 
-3. Access the services:
-- ArgoCD UI: http://localhost:8080 (user: admin)
-- Grafana: http://localhost:3000 (user: admin)
-- Guestbook: http://localhost:8081
+1. Access the services:
+
+- ArgoCD UI: [http://localhost:8080](http://localhost:8080) (user: admin)
+- Grafana: [http://localhost:3000](http://localhost:3000) (user: admin)
+- Guestbook: [http://localhost:8081](http://localhost:8081)
 
 ## 📁 Repository Structure
 
-```
+```plaintext
 .
 ├── k8s/                    # Kubernetes manifests
 │   ├── apps/              # Application manifests
@@ -68,6 +74,7 @@ cd k8s-dev-environment-setup
 ## 🧪 Testing Your Setup
 
 Run the automated test script to verify your environment:
+
 ```bash
 ./scripts/test-env.sh
 ```
@@ -90,7 +97,12 @@ If all tests pass, you'll see a summary and quick access commands for each servi
 
 To clean up your development environment:
 
-- To tear down the environment:
+```bash
+kind delete cluster --name dev-cluster
+```
+
+To tear down the environment completely:
+
 ```bash
 cd terraform
 terraform destroy -auto-approve
