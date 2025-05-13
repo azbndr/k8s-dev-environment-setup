@@ -37,3 +37,13 @@ override.tf.json
 terraform.rc
 dev-cluster-config
 .terraform.lock.hcl
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log
